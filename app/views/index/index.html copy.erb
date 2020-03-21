@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockApp</title>
+</head>
+<body>
+    <h1>Total symbols count : <%= @symbols.length %></h1>
+    <hr>
+    <% @symbols.each do |item| %>
+        <% if (item['symbol'].in?(@trackSymbols.keys)) %>
+            <h2> <%= item['description'] %> </h2>
+            <h4> Symbol: <%= item['symbol'] %> </h4>
+
+            <table>
+                <tr>
+                    <td>Open price</td>
+                    <td><%= @trackSymbols[item['symbol']]['o'] %> zł</td>
+                </tr>
+                <tr>
+                    <td>High price</td>
+                    <td><%= @trackSymbols[item['symbol']]['h'] %> zł</td>
+                </tr>
+                <tr>
+                    <td>Low price</td>
+                    <td><%= @trackSymbols[item['symbol']]['l'] %> zł</td>
+                </tr>
+                <tr>
+                    <td>Current price</td>
+                    <td><%= @trackSymbols[item['symbol']]['c'] %> zł</td>
+                </tr>
+                <tr>
+                    <td>Previous close price</td>
+                    <td><%= @trackSymbols[item['symbol']]['pc'] %> zł</td>
+                </tr>
+                <tr>
+                    <% timestamp = Time.at(@trackSymbols[item['symbol']]['t']) %>
+                    <td>Timestamp</td>
+                    <td><%= timestamp %> s</td>
+                </tr>
+            </table>
+            <% @recommendations[item['symbol']].each do |rec| %>
+                <%= rec %> <br>
+            <% end %>
+            <hr>
+        <% end %>
+    <% end %>
+    <% @qData['ENTER']['dataset']['data'].each do |row| %>
+        <%= row %> <br>
+    <% end %>
+</body>
+</html>
+
