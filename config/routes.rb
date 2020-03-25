@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  get 'index/index'
-  root 'index#index'
+
+  root controller: 'index', action: 'index'
+  resources :gpws
+  get 'all' => 'stock_summary#all'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

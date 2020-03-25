@@ -6,13 +6,10 @@
     <title>StockApp</title>
 </head>
 <body>
-    <h1>Total symbols count : <%= @qData.keys.length %></h1>
-    <hr>
-    <% @filteredIndexes.each do |index| %>
-        <%= index %> <br>
-        <%= @qData[index]['diff'] %> <br>
-        <hr>
-    <% end %>
+    <h1>HOME</h1>
+    <ul>
+        <li><a href="/gpws">ALL [WARNING - high load]</a></li>
+    </ul>
 </body>
 </html>
 

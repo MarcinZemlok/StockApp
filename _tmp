@@ -1,0 +1,8 @@
+# All Polish stox inex codes
+$allIndexes = [
+    "ZEW",
+    "ZNTKLAPY",
+    "ZREW",
+    "ZTSERG",
+    "ZURAWIE",
+]

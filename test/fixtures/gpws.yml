@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  index: MyString
+  date: 2020-03-22
+  open: 1.5
+  close: 1.5
+  high: 1.5
+  low: 1.5
+  change: 1.5
+  trades: 1.5
+  tornover: 1.5
+  volume: 1
+
+two:
+  index: MyString
+  date: 2020-03-22
+  open: 1.5
+  close: 1.5
+  high: 1.5
+  low: 1.5
+  change: 1.5
+  trades: 1.5
+  tornover: 1.5
+  volume: 1
