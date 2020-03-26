@@ -1,7 +1,12 @@
+<head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
 <a href="/"><- HOME</a>
-<a href="/gpws"><- ALL</a>
+<a href="/gpws"><- ALL [WARNING - high load]</a>
 
 <h2 style="color: white; background-color: black;"><%= params[:id] %></h2> <br>
+<div id="stockPlot" style="width:100%;height:100vh;"></div>
 <table>
     <thead>
         <tr>
@@ -30,3 +35,6 @@
         <% end %>
     </tbody>
 </table>
+
+<%= content_tag :div, class: "hidden", id: 'ldata', data: {lData: @lData} do %>
+<% end %>
