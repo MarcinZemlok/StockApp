@@ -2,39 +2,12 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
+<div id="stockPlot" style="width:100%;height:100vh;" data-title='<%= params[:id] %>'></div>
+
+<hr>
 <a href="/"><- HOME</a>
 <a href="/gpws"><- ALL [WARNING - high load]</a>
-
-<h2 style="color: white; background-color: black;"><%= params[:id] %></h2> <br>
-<div id="stockPlot" style="width:100%;height:100vh;"></div>
-<table>
-    <thead>
-        <tr>
-            <th>DATE</th>
-            <th>OPEN</th>
-            <th>HIGH</th>
-            <th>LOW</th>
-            <th>CLOSE</th>
-            <th>VOLUME</th>
-            <th>TURNOVER</th>
-            <th>CHANGE</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% @lData.each do |record| %>
-            <tr>
-                <td><%= record.date %></td>
-                <td><%= record.open %></td>
-                <td><%= record.high %></td>
-                <td><%= record.low %></td>
-                <td><%= record.close %></td>
-                <td><%= record.volume %></td>
-                <td><%= record.tornover %></td>
-                <td><%= record.change %></td>
-            </tr>
-        <% end %>
-    </tbody>
-</table>
+<hr>
 
 <%= content_tag :div, class: "hidden", id: 'ldata', data: {lData: @lData} do %>
 <% end %>
