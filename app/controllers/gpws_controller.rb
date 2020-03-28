@@ -9,7 +9,7 @@ class GpwsController < ApplicationController
 
     def fetchLocalAll
         $allIndexes.each do |index|
-            @lData[index] = Gpw.where(:index=>index).order(:date).reverse_order().take(5)
+            @lData[index] = Gpw.where(:index=>index).order(:date).reverse_order().take(1)
         end
     end
 

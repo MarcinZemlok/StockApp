@@ -3,33 +3,5 @@
 <% @lData.each do |index, value| %>
     <a href="/gpws/<%= index %>">
         <h2 style="color: white; background-color: black;"><%= index %></h2>
-    </a> <br>
-    <table>
-        <thead>
-            <tr>
-                <th>DATE</th>
-                <th>OPEN</th>
-                <th>HIGH</th>
-                <th>LOW</th>
-                <th>CLOSE</th>
-                <th>VOLUME</th>
-                <th>TURNOVER</th>
-                <th>CHANGE</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% value.each do |record| %>
-                <tr>
-                    <td><%= record.date %></td>
-                    <td><%= record.open %></td>
-                    <td><%= record.high %></td>
-                    <td><%= record.low %></td>
-                    <td><%= record.close %></td>
-                    <td><%= record.volume %></td>
-                    <td><%= record.tornover %></td>
-                    <td><%= record.change %></td>
-                </tr>
-            <% end %>
-        </tbody>
-    </table>
+    </a>
 <% end %>
