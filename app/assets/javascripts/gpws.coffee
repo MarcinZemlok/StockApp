@@ -2,6 +2,9 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+_upcolor = 'rgba(100,150,100,1)'
+_downcolor = 'rgba(150,100,100,1)'
+
 main = () ->
     lData = $('#ldata').data('ldata')
 
@@ -17,9 +20,6 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
 
     _ldr = _ld[..]
     _ldr.reverse()
-
-    _upcolor = 'rgba(100,150,100,1)'
-    _downcolor = 'rgba(150,100,100,1)'
 
     hrl = (_d) ->
         if _d < 0
@@ -87,7 +87,7 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
     _waterfallTrace = {
         x: _dater
         y: _waterfall
-        base: _ld[0].close
+        base: _ldr[0].close
         name: 'price'
         type: 'waterfall'
         xaxis: 'x'
@@ -96,6 +96,8 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
         decreasing: {marker: {color: _downcolor}}
         visible: false
     }
+
+    _brickTrace = plotBrick(_ldr)
 
     _tableTrace = {
         header: {
@@ -128,6 +130,10 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
         decreasing: {line: {color: _downcolor}}
         line: {color: 'black'}
         base: _ld[0].close
+        domain: {
+            x: [0, 1]
+            y: [0.02, 1]
+        }
         visible: false
     }
 
@@ -144,27 +150,69 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
         visible: true
     }
 
-    _layout.grid = {
-        rows: 2
-        columns: 1
-        subplots:[['xy'], ['xy2']]
-    }
-    _layout.xaxis = {
-        rangeslider: {
+    _localLayout = {
+        grid: {
+            rows: 2
+            columns: 2
+            subplots:[['xy', 'x2y'], ['xy2']]
+        }
+        xaxis: {
+            domain: [0, 0.99]
+            rangeslider: {visible: false}
+            visible: true
+        }
+        xaxis2: {
+            domain: [0.99, 1]
+            rangeslider: {visible: false}
             visible: false
         }
+        yaxis: {
+            domain: [0.1, 1]
+            visible: true
+        }
+        yaxis2: {
+            domain: [0, 0.1]
+            visible: true
+        }
     }
-    _layout.yaxis = {domain: [0.12, 1]}
-    _layout.yaxis2 = {domain: [0, 0.1]}
+    (_layout[_k] = _v) for _k, _v of _localLayout
 
     Plotly.newPlot(_plt, [
             _scatterTrace
             _candleTrace
             _ohlcTrace
             _waterfallTrace
+            _brickTrace
             _tableTrace
             _volumeTrace
         ], _layout, _config)
+
+plotBrick = (_ld, _step = .5) ->
+    _trace = {
+        x: []
+        y: []
+        base: _ld[0].close
+        name: 'price'
+        type: 'waterfall'
+        xaxis: 'x2'
+        yaxis: 'y'
+        increasing: {marker: {color: _upcolor}}
+        decreasing: {marker: {color: _downcolor}}
+        visible: false
+    }
+
+    _index = 0
+    _last = _ld[0].close
+    for _row in _ld[1..]
+
+        while(Math.abs(_row.close - _last) >= _step)
+            _ = if (_row.close - _last) < 0 then -_step else _step
+            _trace.x.push(_index++)
+            _trace.y.push(_)
+
+            _last += _
+
+    _trace
 
 layoutPlot = (_title='') ->
     {
@@ -174,37 +222,86 @@ layoutPlot = (_title='') ->
         dragmode: 'pan',
         selectdirection: 'h',
         updatemenus: [{
+            direction: 'right'
             y: 1
             yanchor: 'top'
             buttons: [{
-                method: 'restyle'
+                method: 'update'
                 args: [
-                    'visible'
-                    [true, false, false, false, false, true]]
+                    {'visible': [true, false, false, false,  false ,false, true]}
+                    {'xaxis.domain': [0, 0.99]
+                    'xaxis.visible': true
+                    'xaxis2.domain': [0.99, 1]
+                    'xaxis2.visible': false
+                    'yaxis.domain': [0.12, 1]
+                    'yaxis2.visible': true
+                    'yaxis2.domain': [0, 0.1]
+                    'yaxis2.visible': true}]
                 label: 'Linear'
             }, {
-                method: 'restyle'
+                method: 'update'
                 args: [
-                    'visible'
-                    [false, true, false, false, false, true]]
+                    {'visible': [false, true, false, false,  false ,false, true]}
+                    {'xaxis.domain': [0, 0.99]
+                    'xaxis.visible': true
+                    'xaxis2.domain': [0.99, 1]
+                    'xaxis2.visible': false
+                    'yaxis.domain': [0.12, 1]
+                    'yaxis2.visible': true
+                    'yaxis2.domain': [0, 0.1]
+                    'yaxis2.visible': true}]
                 label: 'Candles'
             }, {
-                method: 'restyle'
+                method: 'update'
                 args: [
-                    'visible'
-                    [false, false, true, false, false, true]]
+                    {'visible': [false, false, true, false,  false ,false, true]}
+                    {'xaxis.domain': [0, 0.99]
+                    'xaxis.visible': true
+                    'xaxis2.domain': [0.99, 1]
+                    'xaxis2.visible': false
+                    'yaxis.domain': [0.12, 1]
+                    'yaxis2.visible': true
+                    'yaxis2.domain': [0, 0.1]
+                    'yaxis2.visible': true}]
                 label: 'Stick'
             }, {
-                method: 'restyle'
+                method: 'update'
                 args: [
-                    'visible'
-                    [false, false, false, true, false, true]]
+                    {'visible': [false, false, false, true,  false ,false, true]}
+                    {'xaxis.domain': [0, 0.99]
+                    'xaxis.visible': true
+                    'xaxis2.domain': [0.99, 1]
+                    'xaxis2.visible': false
+                    'yaxis.domain': [0.12, 1]
+                    'yaxis2.visible': true
+                    'yaxis2.domain': [0, 0.1]
+                    'yaxis2.visible': true}]
                 label: 'Waterfall'
             }, {
-                method: 'restyle'
+                method: 'update'
                 args: [
-                    'visible'
-                    [false, false, false, false, true, true]]
+                    {'visible': [false, false, false, false,  true ,false, false]}
+                    {'xaxis.domain': [0, 0.01]
+                    'xaxis.visible': false
+                    'xaxis2.domain': [0.01, 1]
+                    'xaxis2.visible': true
+                    'yaxis.domain': [0.02, 1]
+                    'yaxis2.visible': true
+                    'yaxis2.domain': [0, 0.01]
+                    'yaxis2.visible': false}]
+                label: 'Brick'
+            }, {
+                method: 'update'
+                args: [
+                    {'visible': [false, false, false, false, false ,true, false]}
+                    {'xaxis.domain': [0, 0.99]
+                    'xaxis.visible': false
+                    'xaxis2.domain': [0.99, 1]
+                    'xaxis2.visible': false
+                    'yaxis.domain': [0.02, 1]
+                    'yaxis.visible': false
+                    'yaxis2.domain': [0, 0.01]
+                    'yaxis2.visible': false}]
                 label: 'Table'
             }]
         }]
@@ -215,16 +312,14 @@ configurePlot = () ->
         displayModeBar: true
         responsive: true
         scrollZoom: true
-        showEditInChartStudio: true
-        plotlyServerURL: "https://chart-studio.plotly.com"
     }
 
 getPlot = () ->
     _ = $('#stockPlot')[0]
 
-    _.addEventListener('click'
-        (_e) ->
-            console.log(_e)
-    )
+    # _.addEventListener('click'
+    #     (_e) ->
+    #         console.log(_e)
+    # )
 
     _

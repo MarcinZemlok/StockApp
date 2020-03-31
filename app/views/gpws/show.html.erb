@@ -5,6 +5,9 @@
 <div id="stockPlot" style="width:100%;height:100vh;" data-title='<%= params[:id] %>'></div>
 
 <hr>
+<%= form_tag(:gpw, method: :put) %>
+    <input type="submit" value="UPDATE">
+</form>
 <a href="/"><- HOME</a>
 <a href="/gpws"><- ALL [WARNING - high load]</a>
 <hr>
