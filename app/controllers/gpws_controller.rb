@@ -14,7 +14,11 @@ class GpwsController < ApplicationController
     end
 
     def update
-        _fetchedQuandleNew = fetchQuandleNew(params[:id])
+        if params[:fetch_new] == 'true'
+            fetchQuandleNew(params[:id])
+        else
+            fetchQuandleOld(params[:id])
+        end
 
         redirect_to action: "show", id: params[:id]
     end

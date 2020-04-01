@@ -18,26 +18,41 @@ class ApplicationController < ActionController::Base
 
     saveData(_index, _qData)
 
-    return _qData
+    return
 
-    @filteredIndexes.each do |symbol|
-        @qData[symbol] = {}
-        @qData[symbol][:calcs] = {}
+    # @filteredIndexes.each do |symbol|
+    #     @qData[symbol] = {}
+    #     @qData[symbol][:calcs] = {}
 
-        if(fetchRequired(symbol))
-            @qData[symbol][:meta] = fetchMeta(symbol)['dataset']
-            calculateLastUpdatedSpan(symbol, @qData[symbol][:meta]['refreshed_at'])
-            assesTimespan(symbol)
-            @qData[symbol][:data] = fetchData(symbol)['dataset_data']
-            saveData(symbol, @qData[symbol][:data]['data'])
-        end
-    end
+    #     if(fetchRequired(symbol))
+    #         @qData[symbol][:meta] = fetchMeta(symbol)['dataset']
+    #         calculateLastUpdatedSpan(symbol, @qData[symbol][:meta]['refreshed_at'])
+    #         assesTimespan(symbol)
+    #         @qData[symbol][:data] = fetchData(symbol)['dataset_data']
+    #         saveData(symbol, @qData[symbol][:data]['data'])
+    #     end
+    # end
   end
 
-  def fetchData(_index, _start=false, _end=false)
+  def fetchQuandleOld(_index)
+    # return if not stockOpen
+
+    _oldestRow = (Gpw.where(:index=>params[:id]).order(date: :asc).take(1))[0].date
+
+    _qData = fetchData(_index, false, _oldestRow, 258)
+
+    saveData(_index, _qData)
+
+    return
+  end
+
+  def fetchData(_index, _start=false, _end=false, _limit=false)
       _url = "https://www.quandl.com/api/v3/datasets/WSE/#{_index}/data.json?api_key=#{$quandlToken}"
       _url += "&start_date=#{_start}" if _start
       _url += "&end_date=#{_end}" if _end
+      _url += "&limit=#{_limit}" if _limit
+
+      mylog("URL: #{_url}")
 
       _res = HTTParty.get(_url)
 
