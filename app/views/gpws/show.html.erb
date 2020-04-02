@@ -7,12 +7,14 @@
 <hr>
 <%= form_tag(:gpw, method: :put) %>
     <input type="hidden" name="fetch_new" value="true">
+    <input type="hidden" name="fetch_all" value="false">
     <input type="submit" value="UPDATE">
 </form>
 <a href="/"><- HOME</a>
 <a href="/gpws"><- ALL [WARNING - high load]</a>
 <%= form_tag(:gpw, method: :put) %>
     <input type="hidden" name="fetch_new" value="false">
+    <input type="hidden" name="fetch_all" value="false">
     <input type="submit" value="UPDATE BACK">
 </form>
 <hr>

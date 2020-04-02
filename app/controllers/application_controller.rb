@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   def fetchQuandleNew(_index)
     # return if not stockOpen
 
-    _newestRow = (Gpw.where(:index=>params[:id]).order(date: :desc).take(1))[0].date
+    _newestRow = (Gpw.where(:index=>_index).order(date: :desc).take(1))[0].date
 
     _qData = fetchData(_index, _newestRow)
 
@@ -37,9 +37,9 @@ class ApplicationController < ActionController::Base
   def fetchQuandleOld(_index)
     # return if not stockOpen
 
-    _oldestRow = (Gpw.where(:index=>params[:id]).order(date: :asc).take(1))[0].date
+    _oldestRow = (Gpw.where(:index=>_index).order(date: :asc).take(1))[0].date
 
-    _qData = fetchData(_index, false, _oldestRow, 258)
+    _qData = fetchData(_index, false, _oldestRow, 100)
 
     saveData(_index, _qData)
 

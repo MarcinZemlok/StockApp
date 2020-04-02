@@ -15,12 +15,18 @@ class GpwsController < ApplicationController
 
     def update
         if params[:fetch_new] == 'true'
-            fetchQuandleNew(params[:id])
+            fetchQuandleNew(params[:id]) if params[:fetch_all] == 'false'
+            for _index in $allIndexes
+                fetchQuandleNew(_index)
+            end if params[:fetch_all] == 'true'
         else
-            fetchQuandleOld(params[:id])
+            fetchQuandleOld(params[:id]) if params[:fetch_all] == 'false'
+            for _index in $allIndexes
+                fetchQuandleOld(_index)
+            end if params[:fetch_all] == 'true'
         end
 
-        redirect_to action: "show", id: params[:id]
+        redirect_to action: "index"
     end
 
 end

@@ -9,6 +9,16 @@
     <h1>HOME</h1>
     <ul>
         <li><a href="/gpws">ALL [WARNING - high load]</a></li>
+        <%= form_tag('/gpws/all', method: :put) %>
+            <input type="hidden" name="fetch_new" value="true">
+            <input type="hidden" name="fetch_all" value="true">
+            <input type="submit" value="UPDATE NEW ALL">
+        </form>
+        <%= form_tag('/gpws/all', method: :put) %>
+            <input type="hidden" name="fetch_new" value="false">
+            <input type="hidden" name="fetch_all" value="true">
+            <input type="submit" value="UPDATE BACK ALL">
+        </form>
     </ul>
 </body>
 </html>
