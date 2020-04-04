@@ -11,6 +11,10 @@ class GpwsController < ApplicationController
 
     def show
         @lData = Gpw.where(:index=>params[:id]).order(date: :desc)
+
+        @bData = Tips.new(@lData)
+
+        # mylog(@bData.inspect)
     end
 
     def update

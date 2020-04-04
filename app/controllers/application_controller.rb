@@ -142,6 +142,93 @@ class ApplicationController < ActionController::Base
   # end
 end
 
+class Tips < ApplicationController
+    """Detects and stores all tips on a plot."""
+    def initialize(_data)
+        @step = computeBrickStep(_data.reverse)
+
+        @bricks = computeBrick(_data.reverse)
+
+        @tips = []
+        detectTips
+    end
+
+    def computeBrickStep(_data)
+        _sum = 0
+        for _row in _data
+            _sum += _row.change.abs
+        end
+
+        return (_sum / _data.length)
+    end
+
+    def computeBrick(_data)
+        _result = {
+            :x => [],
+            :y => [],
+            :value => [],
+            :date => []
+        }
+
+        _index = 0
+        _lastClose = _data[0].close
+        _data.slice(1,_data.length).each do |_row|
+
+            while((_row.close - _lastClose).abs >= @step)
+                if (_row.close - _lastClose) < 0
+                    _result[:y] += [-@step]
+                    _lastClose -= @step
+                else
+                    _result[:y] += [@step]
+                    _lastClose += @step
+                end
+                _result[:x] += [_index]
+                _result[:date] += [_row.date]
+                _result[:value] += [_lastClose]
+                _index += 1
+            end
+        end
+
+        return _result
+    end
+
+    def detectTips
+        [*3...@bricks[:y].length].each do |_i|
+            if(
+                @bricks[:y][_i-3] == @bricks[:y][_i-2] &&
+                @bricks[:y][_i-1] == @bricks[:y][_i] &&
+                @bricks[:y][_i-3] != @bricks[:y][_i]
+            )
+                @tips += [Tip.new(
+                    @bricks[:date][_i-3],
+                    @bricks[:date][_i-1],
+                    _i-3,
+                    _i,
+                    (@bricks[:value][_i-2] + @bricks[:value][_i-1]) / 2
+                )]
+            end
+        end
+    end
+end
+
+class Tip
+    """Stores one tip on a plot and all related data."""
+    def initialize(_dateStart, _dateEnd, _indexStart, _indexEnd, _value)
+
+        @dateStart = _dateStart
+        @dateEnd = _dateEnd
+        @indexStart = _indexStart
+        @indexEnd = _indexEnd
+        @value = _value
+        # @type = typeTip
+
+    end
+
+    # def typeTip
+    #     if @
+    # end
+end
+
 # All Polish stox inex codes
 $allIndexes = [
     "06MAGNA",

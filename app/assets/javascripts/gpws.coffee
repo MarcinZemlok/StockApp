@@ -7,16 +7,17 @@ _downcolor = 'rgba(150,100,100,1)'
 
 main = () ->
     lData = $('#ldata').data('ldata')
+    bData = $('#bdata').data('bdata')
 
     lDataPlot = getPlot()
 
     plotLayout = layoutPlot(lDataPlot.dataset.title)
     plotConfig = configurePlot()
-    plot(lDataPlot, lData, plotLayout, plotConfig)
+    plot(lDataPlot, lData, bData, plotLayout, plotConfig)
 
 window.onload = main
 
-plot = (_plt, _ld, _layout=null, _config=null) ->
+plot = (_plt, _ld, _bd, _layout=null, _config=null) ->
 
     _ldr = _ld[..]
     _ldr.reverse()
@@ -97,7 +98,7 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
         visible: false
     }
 
-    _brickTrace = plotBrick(_ldr)
+    _brickTrace = plotBrick(_bd, _ldr[0].close)
 
     _tableTrace = {
         header: {
@@ -150,6 +151,20 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
         visible: true
     }
 
+    _shapes = ({
+            type: "circle"
+            xref: 'x'
+            x0: _tip.dateStart
+            x1: _tip.dateEnd
+            yref: 'y'
+            y0: _tip.value + _bd.step
+            y1: _tip.value - _bd.step
+            line: {
+                color: 'red'
+                width: '5px'
+            }
+        } for _tip in _bd.tips)
+
     _localLayout = {
         grid: {
             rows: 2
@@ -174,6 +189,7 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
             domain: [0, 0.1]
             visible: true
         }
+        shapes: _shapes
     }
     (_layout[_k] = _v) for _k, _v of _localLayout
 
@@ -187,11 +203,12 @@ plot = (_plt, _ld, _layout=null, _config=null) ->
             _volumeTrace
         ], _layout, _config)
 
-plotBrick = (_ld, _step = .5) ->
+plotBrick = (_bd, _base, _step = false) ->
     _trace = {
         x: []
         y: []
-        base: _ld[0].close
+        text: []
+        base: _base
         name: 'price'
         type: 'waterfall'
         xaxis: 'x2'
@@ -201,16 +218,29 @@ plotBrick = (_ld, _step = .5) ->
         visible: false
     }
 
-    _index = 0
-    _last = _ld[0].close
-    for _row in _ld[1..]
+    _trace.x.push(_x) for _x in _bd.bricks.x
+    _trace.y.push(_y) for _y in _bd.bricks.y
+    _trace.text.push("Close value: #{_value}") for _value in _bd.bricks.value
 
-        while(Math.abs(_row.close - _last) >= _step)
-            _ = if (_row.close - _last) < 0 then -_step else _step
-            _trace.x.push(_index++)
-            _trace.y.push(_)
+    # if not _step
+    #     _step = 0
+    #     _step += Math.abs(_row.change) for _row in _ld
 
-            _last += _
+    # console.log(_step)
+    # console.log(_ld.length)
+    # _step /= _ld.length
+    # console.log(_step)
+
+    # _index = 0
+    # _last = _ld[0].close
+    # for _row in _ld[1..]
+
+    #     while(Math.abs(_row.close - _last) >= _step)
+    #         _ = if (_row.close - _last) < 0 then -_step else _step
+    #         _trace.x.push(_index++)
+    #         _trace.y.push(_)
+
+    #         _last += _
 
     _trace
 
