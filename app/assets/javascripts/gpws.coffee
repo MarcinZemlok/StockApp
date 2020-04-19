@@ -2,8 +2,18 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+
+lData = null
+bData = null
+
 _upcolor = 'rgba(100,150,100,1)'
 _downcolor = 'rgba(150,100,100,1)'
+
+ll = (_str, _nl=true) ->
+    _log = $('#console')
+    _log.text("#{_log.val()}\n #{_str}") if _nl
+    _log.text("#{_log.val()}#{_str}") if not _nl
+    _log.scrollTop(_log[0].scrollHeight)
 
 main = () ->
     lData = $('#ldata').data('ldata')
@@ -14,6 +24,10 @@ main = () ->
     plotLayout = layoutPlot(lDataPlot.dataset.title)
     plotConfig = configurePlot()
     plot(lDataPlot, lData, bData, plotLayout, plotConfig)
+
+    # ll(" ml5 version: #{ml5.version}", false)
+    # ll('================================================================================')
+    lstmSetup()
 
 window.onload = main
 
@@ -353,3 +367,24 @@ getPlot = () ->
     # )
 
     _
+
+# LSTM NN
+
+lstmnn = null
+
+lstmSetup = () ->
+    lstmnn = tf.sequential()
+    lstmnn.add(tf.layers.dense({units: 1, inputShape: [1]}))
+
+    lstmnn.compile({loss: 'meanSquaredError', optimizer: 'sgd'})
+
+    # Generate some synthetic data for training.
+    xs = tf.tensor2d([1, 2, 3, 4], [4, 1])
+    ys = tf.tensor2d([1, 3, 5, 7], [4, 1])
+
+    # Train the lstmnn using the data.
+    lstmnn.fit(xs, ys, {epochs: 10}).then(() ->
+        # Use the lstmnn to do inference on a data point the lstmnn hasn't seen before:
+        lstmnn.predict(tf.tensor2d([5], [1, 1])).print()
+        # Open the browser devtools to see the output
+    )
